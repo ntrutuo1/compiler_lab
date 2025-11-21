@@ -1,0 +1,26 @@
+  PROGRAM OperatorTest;
+VAR
+    a, b, c: INTEGER;
+    result: BOOLEAN;
+BEGIN
+    a := 10;
+    b := 20;
+    c := 15;
+    
+    (* Arithmetic operators *)
+    a := a + b * c;
+    b := b - c / a;
+    c := a * b + c;
+    
+    (* Comparison operators *)
+    result := (a = b);
+    result := (a != b);
+    result := (a < b);
+    result := (a > b);
+    result := (a <= b);
+    result := (a >= b);
+    
+    (* Complex expressions *)
+    IF (a + b > c) AND (b - a < c) THEN
+        CALL ComplexCondition;
+END.

@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "reader.h": "c",
+    "stdlib.h": "c",
+    "stdio.h": "c",
+    "token.h": "c",
+    "stdarg.h": "c",
+    "charcode.h": "c"
+  }
+}

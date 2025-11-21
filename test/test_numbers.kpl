@@ -1,0 +1,21 @@
+PROGRAM NumberTest;
+CONST
+    pi = 314;
+    max_size = 1000;
+    min_value = 0;
+VAR
+    score1, score2, score3: INTEGER;
+    average: INTEGER;
+BEGIN
+    score1 := 85;
+    score2 := 92;
+    score3 := 78;
+    average := (score1 + score2 + score3) / 3;
+    
+    IF average >= 90 THEN
+        CALL ExcellentGrade
+    ELSE IF average >= 80 THEN
+        CALL GoodGrade
+    ELSE
+        CALL AverageGrade;
+END.

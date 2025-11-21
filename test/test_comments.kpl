@@ -1,0 +1,35 @@
+PROGRAM CommentTest;
+(* This is a simple program to test comment handling *)
+VAR
+    count: INTEGER; (* counter variable *)
+    total: INTEGER; (* total sum *)
+    
+(* Function to calculate sum *)
+FUNCTION CalculateSum(n: INTEGER): INTEGER;
+VAR
+    i, sum: INTEGER;
+BEGIN
+    sum := 0;
+    (*
+        This is a multi-line comment
+        that spans across several lines
+        to test comment skipping
+    *)
+    FOR i := 1 TO n DO
+    BEGIN
+        sum := sum + i; (* add current number *)
+    END;
+    (* Return the result *)
+    CalculateSum := sum;
+END;
+
+BEGIN
+    (* Main program block *)
+    count := 10;
+    total := CalculateSum(count);
+    
+    (* Nested comment test - this should work *)
+    (* Outer comment (* inner comment *) rest of outer comment *)
+    
+    CALL DisplayResult(total);
+END.

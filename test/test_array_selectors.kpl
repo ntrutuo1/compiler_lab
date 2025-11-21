@@ -1,0 +1,26 @@
+PROGRAM ArraySelectorTest;
+VAR
+    matrix: ARRAY [1..5, 1..5] OF INTEGER;
+    vector: ARRAY [1..10] OF CHAR;
+    i, j: INTEGER;
+BEGIN
+    i := 1;
+    WHILE i <= 5 DO
+    BEGIN
+        j := 1;
+        WHILE j <= 5 DO
+        BEGIN
+            matrix[(i), (j)] := i * j;
+            j := j + 1;
+        END;
+        i := i + 1;
+    END;
+    
+    (* Test array element access *)
+    vector[(1)] := 'A';
+    vector[(2)] := 'B';
+    vector[(3)] := 'C';
+    
+    (* Complex array expressions *)
+    matrix[(2 + 1), (3 * 1)] := matrix[(1), (2)] + matrix[(2), (1)];
+END.

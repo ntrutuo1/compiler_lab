@@ -1,0 +1,17 @@
+PROGRAM ErrorTest;
+VAR
+    very_long_identifier_that_exceeds_limit: INTEGER; (* This should cause error *)
+    normal_var: INTEGER;
+BEGIN
+    (* Invalid char constant *)
+    normal_var := 'AB';  (* Invalid - should be single char *)
+    
+    (* Unclosed comment *)
+    (* This comment is not closed...
+    
+    normal_var := 5;
+    
+    (* Invalid symbols *)
+    normal_var := 10 @ 5;  (* @ is invalid symbol *)
+    
+END.

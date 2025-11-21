@@ -17,7 +17,7 @@
 #include "charcode.h"
 #include "token.h"
 #include "error.h"
-#include "scanner.c"
+#include "scanner.h"
 // #include "main.h"
 
 
