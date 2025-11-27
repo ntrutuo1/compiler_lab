@@ -1,8 +1,0 @@
-PROGRAM SkipBlankTest;
-VAR
-    a, b, c: INTEGER;
-BEGIN
-    a := 1;
-    b    :=    2;
-    c := 3;
-END.
