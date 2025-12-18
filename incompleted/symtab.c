@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtab.h"
+#include "error.h"
 
 void freeObject(Object* obj);
 void freeScope(Scope* scope);
@@ -68,7 +69,7 @@ void freeType(Type* type) {
     break;
   case TP_ARRAY:
     freeType(type->elementType);
-    free(type);
+    freeType(type);
     break;
   }
 }

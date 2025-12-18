@@ -25,7 +25,7 @@ struct {
   {"BEGIN", KW_BEGIN},
   {"END", KW_END},
   {"CALL", KW_CALL},
-  {"IF", KW_IF},  
+  {"IF", KW_IF},
   {"THEN", KW_THEN},
   {"ELSE", KW_ELSE},
   {"WHILE", KW_WHILE},
