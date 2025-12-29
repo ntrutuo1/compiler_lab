@@ -13,119 +13,126 @@ extern SymTab* symtab;
 extern Token* currentToken;
 
 Object* lookupObject(char *name) {
-  // Search from current scope to outer scopes
   Scope* scope = symtab->currentScope;
   Object* obj;
-  
+
   while (scope != NULL) {
     obj = findObject(scope->objList, name);
     if (obj != NULL) return obj;
     scope = scope->outer;
   }
-  
-  // Search in global object list
   obj = findObject(symtab->globalObjectList, name);
-  return obj;
+  if (obj != NULL) return obj;
+  return NULL;
 }
 
 void checkFreshIdent(char *name) {
-  // Check if identifier is already declared in current scope
-  Object* obj = findObject(symtab->currentScope->objList, name);
-  if (obj != NULL) {
+  if (findObject(symtab->currentScope->objList, name) != NULL)
     error(ERR_DUPLICATE_IDENT, currentToken->lineNo, currentToken->colNo);
-  }
 }
 
 Object* checkDeclaredIdent(char* name) {
-  // Check if identifier is declared
   Object* obj = lookupObject(name);
   if (obj == NULL) {
-    error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    error(ERR_UNDECLARED_IDENT,currentToken->lineNo, currentToken->colNo);
   }
   return obj;
 }
 
 Object* checkDeclaredConstant(char* name) {
-  // Check if identifier is a declared constant
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_CONSTANT, currentToken->lineNo, currentToken->colNo);
-  }
-  if (obj->kind != OBJ_CONSTANT) {
-    error(ERR_INVALID_CONSTANT, currentToken->lineNo, currentToken->colNo);
-  }
+  if (obj == NULL)
+    error(ERR_UNDECLARED_CONSTANT,currentToken->lineNo, currentToken->colNo);
+  if (obj->kind != OBJ_CONSTANT)
+    error(ERR_INVALID_CONSTANT,currentToken->lineNo, currentToken->colNo);
+
   return obj;
 }
 
 Object* checkDeclaredType(char* name) {
-  // Check if identifier is a declared type
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_TYPE, currentToken->lineNo, currentToken->colNo);
-  }
-  if (obj->kind != OBJ_TYPE) {
-    error(ERR_INVALID_TYPE, currentToken->lineNo, currentToken->colNo);
-  }
+  if (obj == NULL)
+    error(ERR_UNDECLARED_TYPE,currentToken->lineNo, currentToken->colNo);
+  if (obj->kind != OBJ_TYPE)
+    error(ERR_INVALID_TYPE,currentToken->lineNo, currentToken->colNo);
+
   return obj;
 }
 
 Object* checkDeclaredVariable(char* name) {
-  // Check if identifier is a declared variable
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_VARIABLE, currentToken->lineNo, currentToken->colNo);
-  }
-  if (obj->kind != OBJ_VARIABLE) {
-    error(ERR_INVALID_VARIABLE, currentToken->lineNo, currentToken->colNo);
-  }
+  if (obj == NULL)
+    error(ERR_UNDECLARED_VARIABLE,currentToken->lineNo, currentToken->colNo);
+  if (obj->kind != OBJ_VARIABLE)
+    error(ERR_INVALID_VARIABLE,currentToken->lineNo, currentToken->colNo);
+
   return obj;
 }
 
 Object* checkDeclaredFunction(char* name) {
-  // Check if identifier is a declared function
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_FUNCTION, currentToken->lineNo, currentToken->colNo);
-  }
-  if (obj->kind != OBJ_FUNCTION) {
-    error(ERR_INVALID_FUNCTION, currentToken->lineNo, currentToken->colNo);
-  }
+  if (obj == NULL)
+    error(ERR_UNDECLARED_FUNCTION,currentToken->lineNo, currentToken->colNo);
+  if (obj->kind != OBJ_FUNCTION)
+    error(ERR_INVALID_FUNCTION,currentToken->lineNo, currentToken->colNo);
+
   return obj;
 }
 
 Object* checkDeclaredProcedure(char* name) {
-  // Check if identifier is a declared procedure
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_PROCEDURE, currentToken->lineNo, currentToken->colNo);
-  }
-  if (obj->kind != OBJ_PROCEDURE) {
-    error(ERR_INVALID_PROCEDURE, currentToken->lineNo, currentToken->colNo);
-  }
+  if (obj == NULL)
+    error(ERR_UNDECLARED_PROCEDURE,currentToken->lineNo, currentToken->colNo);
+  if (obj->kind != OBJ_PROCEDURE)
+    error(ERR_INVALID_PROCEDURE,currentToken->lineNo, currentToken->colNo);
+
   return obj;
 }
 
 Object* checkDeclaredLValueIdent(char* name) {
-  // Check if identifier is a valid lvalue (variable, parameter, or function)
   Object* obj = lookupObject(name);
-  if (obj == NULL) {
-    error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
-  }
-  
+  if (obj == NULL)
+    error(ERR_UNDECLARED_IDENT,currentToken->lineNo, currentToken->colNo);
+
   switch (obj->kind) {
   case OBJ_VARIABLE:
   case OBJ_PARAMETER:
-    return obj;
+    break;
   case OBJ_FUNCTION:
-    // Functions can be assigned values within their own scope
-    if (obj == symtab->currentScope->owner) {
-      return obj;
-    }
-    error(ERR_INVALID_IDENT, currentToken->lineNo, currentToken->colNo);
+    if (obj != symtab->currentScope->owner) 
+      error(ERR_INVALID_IDENT,currentToken->lineNo, currentToken->colNo);
     break;
   default:
-    error(ERR_INVALID_IDENT, currentToken->lineNo, currentToken->colNo);
+    error(ERR_INVALID_IDENT,currentToken->lineNo, currentToken->colNo);
   }
+
   return obj;
 }
+
+
+void checkIntType(Type* type) {
+  if ((type != NULL) && (type->typeClass == TP_INT)) return;
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
+
+void checkCharType(Type* type) {
+  if ((type != NULL) && (type->typeClass == TP_CHAR)) return;
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
+
+void checkBasicType(Type* type) {
+  if ((type != NULL) && ((type->typeClass == TP_INT) || (type->typeClass == TP_CHAR))) return;
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
+
+void checkArrayType(Type* type) {
+  if ((type != NULL) && (type->typeClass == TP_ARRAY)) return;
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
+
+void checkTypeEquality(Type* type1, Type* type2) {
+  if (compareType(type1, type2) == 0)
+    error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
+
 
