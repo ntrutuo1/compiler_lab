@@ -87,10 +87,9 @@ int sizeOfType(Type* type) {
   case TP_CHAR:
     return CHAR_SIZE;
   case TP_ARRAY:
-    return type->arraySize * sizeOfType(type->elementType);
-  default:
-    return 0;
+    return (type->arraySize * sizeOfType(type->elementType));
   }
+  return 0;
 }
 
 /******************* Constant utility ******************************/
@@ -350,58 +349,46 @@ void exitBlock(void) {
 }
 
 void declareObject(Object* obj) {
-  Object *owner;
+  Object* owner;
 
-  if (symtab->currentScope == NULL) {
-    addObject(&symtab->globalObjectList, obj);
-  } else {
-    addObject(&symtab->currentScope->objList, obj);
-  }
-
-  switch (obj->kind) {
-  case OBJ_VARIABLE:
-    if (symtab->currentScope != NULL) {
+  if (symtab->currentScope == NULL)  //  globalObject
+    addObject(&(symtab->globalObjectList), obj);
+  else {
+    switch (obj->kind) {
+    case OBJ_VARIABLE:
       obj->varAttrs->scope = symtab->currentScope;
       obj->varAttrs->localOffset = symtab->currentScope->frameSize;
       symtab->currentScope->frameSize += sizeOfType(obj->varAttrs->type);
-    }
-    break;
-  case OBJ_PARAMETER:
-    if (symtab->currentScope != NULL) {
+      break;
+    case OBJ_PARAMETER:
       obj->paramAttrs->scope = symtab->currentScope;
       obj->paramAttrs->localOffset = symtab->currentScope->frameSize;
-      symtab->currentScope->frameSize += sizeOfType(obj->paramAttrs->type);
-
+      symtab->currentScope->frameSize ++;
       owner = symtab->currentScope->owner;
-      if (owner != NULL) {
-        switch (owner->kind) {
-        case OBJ_FUNCTION:
-          addObject(&owner->funcAttrs->paramList, obj);
-          owner->funcAttrs->paramCount++;
-          break;
-        case OBJ_PROCEDURE:
-          addObject(&owner->procAttrs->paramList, obj);
-          owner->procAttrs->paramCount++;
-          break;
-        default:
-          break;
-        }
+      switch (owner->kind) {
+      case OBJ_FUNCTION:
+	addObject(&(owner->funcAttrs->paramList), obj);
+	owner->funcAttrs->paramCount ++;
+	break;
+      case OBJ_PROCEDURE:
+	addObject(&(owner->procAttrs->paramList), obj);
+	owner->procAttrs->paramCount ++;
+	break;
+      default:
+	break;
       }
+      break;
+    case OBJ_FUNCTION:
+      obj->funcAttrs->scope->outer = symtab->currentScope;
+      break;
+    case OBJ_PROCEDURE:
+      obj->procAttrs->scope->outer = symtab->currentScope;
+      break;
+    default: break;
     }
-    break;
-  case OBJ_FUNCTION:
-    obj->funcAttrs->scope->outer = symtab->currentScope;
-    break;
-  case OBJ_PROCEDURE:
-    obj->procAttrs->scope->outer = symtab->currentScope;
-    break;
-  case OBJ_PROGRAM:
-    obj->progAttrs->scope->outer = symtab->currentScope;
-    symtab->program = obj;
-    break;
-  default:
-    break;
+    addObject(&(symtab->currentScope->objList), obj);
   }
+  
 }
 
 
